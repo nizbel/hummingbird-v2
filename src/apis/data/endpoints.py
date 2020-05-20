@@ -266,7 +266,7 @@ class DataSusPaginatedList(Resource):
 class DataSusGraphsLast30Days(Resource):
     @data_endpoints.doc('datasus_graphs_last_30_days')
     @data_endpoints.marshal_with(datasus_response_graphs_last_30_days)
-    def get(self, page):
+    def get(self):
         """SUS Data Last 30 Days"""
         response = datasus_services.get_graph_last_30_days()
 
