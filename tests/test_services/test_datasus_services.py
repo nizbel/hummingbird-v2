@@ -5,6 +5,7 @@ from apis.data import datasus_services
 from tests.runner import clear_db
 import datetime
 
+
 class TestDataSusServices(TestCase):
     def setUp(self):
         self.app_context = app.test_request_context()
@@ -30,7 +31,6 @@ class TestDataSusServices(TestCase):
 
         self.assertEqual(len(response.get('sus_list')), 2)
 
-
     def test_sus_list_return_all_cases_paginated(self):
         DataSus().save(self.db.session, id=1, region='region', state='state', date=datetime.date(2020, 3, 29),
                        newcases=1, totalcases=2, newdeaths=1, totaldeaths=1, update=datetime.date(2020, 3, 29))
@@ -43,3 +43,20 @@ class TestDataSusServices(TestCase):
         response = datasus_services.get_sus_list(1)
 
         self.assertEqual(len(response.get('sus_list')), 2)
+
+    def test_sus_graphs_last_30_days(self):
+        # Return only the last 30 elements
+        for days_amount in range(31):
+            current_day = datetime.date.today() - datetime.timedelta(days=days_amount)
+            DataSus().save(self.db.session, id=days_amount, region='Brasil', state='state', date=current_day,
+                           newcases=1, totalcases=2, newdeaths=1, totaldeaths=1, update=current_day)
+
+        self.db.session.commit()
+
+        response = datasus_services.get_graph_last_30_days()
+
+        self.assertEqual(len(response), 30)
+        for current_date in response:
+            self.assertIn('date', current_date.keys())
+            self.assertIn('totalCases', current_date.keys())
+            self.assertIn('totalDeaths', current_date.keys())

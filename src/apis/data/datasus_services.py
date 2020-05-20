@@ -16,3 +16,24 @@ def get_sus_list(page):
         }
     finally:
         db.session.close()
+
+
+def get_graph_last_30_days():
+    try:
+        last_30_days = DataSus.query.filter(DataSus.region == 'Brasil') \
+            .with_entities(DataSus.date, DataSus.totalcases,
+                           DataSus.totaldeaths) \
+            .order_by(DataSus.date.desc()).limit(30).all()
+
+        result = []
+        for day in last_30_days:
+            current_date = {
+                'date': day.date,
+                'totalCases': day.totalcases,
+                'totalDeaths': day.totaldeaths
+            }
+            result.append(current_date)
+
+        return result
+    finally:
+        db.session.close()
