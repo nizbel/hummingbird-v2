@@ -47,11 +47,7 @@ def get_graph_total_cases():
             func.max(DataSus.date)).subquery()
         total_cases = DataSus.query.filter(and_(DataSus.date == subquery,
                                                 DataSus.coduf == 76)) \
-            .with_entities(DataSus.id, DataSus.region, DataSus.state,
-                           DataSus.city, DataSus.coduf, DataSus.codmun,
-                           DataSus.population, DataSus.date,
-                           DataSus.totalcases, DataSus.population,
-                           DataSus.date, DataSus.totalcases,
+            .with_entities(DataSus.region, DataSus.date, DataSus.totalcases,
                            DataSus.totaldeaths) \
             .all()
 
