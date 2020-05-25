@@ -319,8 +319,8 @@ class DataSusGraphsTotalCases(Resource):
             abort(404, "No data found")
 
         return response
-      
-      
+
+
 @data_endpoints.route('/datasus/regions')
 class DataSusRegions(Resource):
     @data_endpoints.doc('datasus_regions')

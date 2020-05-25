@@ -64,7 +64,7 @@ def get_graph_total_cases():
         return result
     finally:
         db.session.close()
-        
+
 
 def get_regions():
     try:
