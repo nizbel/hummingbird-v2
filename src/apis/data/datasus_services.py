@@ -64,3 +64,35 @@ def get_graph_total_cases():
         return result
     finally:
         db.session.close()
+        
+
+def get_regions():
+    try:
+        subquery = DataSus.query.with_entities(
+            func.max(DataSus.date)).subquery()
+        regions = DataSus.query.filter(DataSus.date == subquery) \
+            .with_entities(DataSus.id, DataSus.region, DataSus.state,
+                           DataSus.city, DataSus.coduf, DataSus.codmun,
+                           DataSus.population, DataSus.date,
+                           DataSus.totalcases, DataSus.totaldeaths) \
+            .all()
+
+        result = []
+        for region in regions:
+            current_region = {
+                'id': region.id,
+                'region': region.region,
+                'state': region.state,
+                'city': region.city,
+                'coduf': region.coduf,
+                'codmun': region.codmun,
+                'population': region.population,
+                'date': region.date,
+                'totalCases': region.totalcases,
+                'totalDeaths': region.totaldeaths
+            }
+            result.append(current_region)
+
+        return result
+    finally:
+        db.session.close()

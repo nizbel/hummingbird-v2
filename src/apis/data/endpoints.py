@@ -82,9 +82,29 @@ datasus_response_graphs_last_30_days = data_endpoints.model(
     'SUS Data Graph Last 30 Days', {
         'date': fields.Date(required=True, description='Date'),
         'totalCases': fields.Integer(
-            required=True, description='Cases'),
+            required=True, description='Total cases'),
         'totalDeaths': fields.Integer(
-            required=True, description='Deaths')
+            required=True, description='Total deaths')
+    }
+)
+
+datasus_response_regions = data_endpoints.model(
+    'SUS Data Regions', {
+        'id': fields.Integer(required=True, description='Id'),
+        'region': fields.String(required=True, description='Region'),
+        'state': fields.String(required=True, description='State'),
+        'city': fields.String(required=True, description='City'),
+        'coduf': fields.Integer(
+            required=True, description='State code'),
+        'codmun': fields.Integer(
+            required=True, description='City code'),
+        'population': fields.Integer(
+            required=True, description='Population'),
+        'totalCases': fields.Integer(
+            required=True, description='Total cases'),
+        'totalDeaths': fields.Integer(
+            required=True, description='Total deaths'),
+        'date': fields.Date(required=True, description='Date')
     }
 )
 
@@ -278,7 +298,7 @@ class DataSusGraphsLast30Days(Resource):
     @data_endpoints.doc('datasus_graphs_last_30_days')
     @data_endpoints.marshal_with(datasus_response_graphs_last_30_days)
     def get(self):
-        """SUS Data Last 30 Days"""
+        """SUS Data Graphs Last 30 Days"""
         response = datasus_services.get_graph_last_30_days()
 
         if not response:
@@ -294,6 +314,20 @@ class DataSusGraphsTotalCases(Resource):
     def get(self):
         """SUS Data Graph Total Cases"""
         response = datasus_services.get_graph_total_cases()
+
+        if not response:
+            abort(404, "No data found")
+
+        return response
+      
+      
+@data_endpoints.route('/datasus/regions')
+class DataSusRegions(Resource):
+    @data_endpoints.doc('datasus_regions')
+    @data_endpoints.marshal_with(datasus_response_regions)
+    def get(self):
+        """SUS Data Regions"""
+        response = datasus_services.get_regions()
 
         if not response:
             abort(404, "No data found")
